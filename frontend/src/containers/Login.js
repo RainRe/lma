@@ -74,13 +74,7 @@ const Login = ({ login, isAuthenticated }) => {
                 </div>
                 <button className='btn btn-primary' type='submit'>Login</button>
             </form>
-            <button className='btn btn-danger mt-3' onClick={continueWithGoogle}>
-                Continue With Google
-            </button>
-            <br />
-            <button className='btn btn-primary mt-3' onClick={continueWithFacebook}>
-                Continue With Facebook
-            </button>
+
             <p className='mt-3'>
                 Don't have an account? <Link to='/signup'>Sign Up</Link>
             </p>
@@ -96,3 +90,13 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { login })(Login);
+
+           /*
+            <button className='btn btn-danger mt-3' onClick={continueWithGoogle}>
+                Continue With Google
+            </button>
+            <br />
+            <button className='btn btn-primary mt-3' onClick={continueWithFacebook}>
+                Continue With Facebook
+            </button>
+            */

@@ -19,3 +19,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+# rm -rf ../backend/build && react-scripts build && cp -r build ../backend/build

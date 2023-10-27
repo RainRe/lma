@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -47,15 +48,19 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
+
     'social_django.middleware.SocialAuthExceptionMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
+CORS_ALLOW_ALL_ORIGINS = True  # Allow all origins; you can also specify specific domains here
+CORS_ALLOW_CREDENTIALS = True  # Allow cookies and credentials for cross-origin requests
 
 ROOT_URLCONF = 'auth_system.urls'
 
@@ -86,18 +91,19 @@ WSGI_APPLICATION = 'auth_system.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'auth_system',
+        'NAME': 'ekulma_db',
         'USER': 'postgres',
-        'PASSWORD': '[YOUR DATABASE PASSWORD]',
-        'HOST': 'localhost'
+        'PASSWORD': 'Gal0perid0l!',
+        'HOST': '176.124.204.231',
+        'PORT': 5433
     }
 }
 
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
-EMAIL_HOST_USER = '[YOUR EMAIL THAT WILL SEND]'
-EMAIL_HOST_PASSWORD = '[YOUR EMAIL APP PASSWORD]'
+EMAIL_HOST_USER = 'ekulma.reg@gmail.com'
+EMAIL_HOST_PASSWORD = 'asjdh@#fasf2fa@#r3fa'
 EMAIL_USE_TLS = True
 
 # Password validation
@@ -130,7 +136,7 @@ USE_I18N = True
 
 USE_L10N = True
 
-USE_TZ = True
+USE_TZ = False
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.0/howto/static-files/
@@ -187,7 +193,7 @@ DJOSER = {
     }
 }
 
-SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = '[YOUR GOOGLE OAUTH2 API KEY]'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = 'AIzaSyCRr3sW-ian_gWqXKc0pfwHXnNYIgCjfto'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = '[YOUR GOOGLE OAUTH2 API SECRET]'
 SOCIAL_AUTH_GOOGLE_OAUTH2_SCOPE = ['https://www.googleapis.com/auth/userinfo.email', 'https://www.googleapis.com/auth/userinfo.profile', 'openid']
 SOCIAL_AUTH_GOOGLE_OAUTH2_EXTRA_DATA = ['first_name', 'last_name']
