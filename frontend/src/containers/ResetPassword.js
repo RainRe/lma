@@ -1,28 +1,41 @@
 import React, { useState } from 'react';
-import { Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { reset_password } from '../actions/auth';
 
 const ResetPassword = ({ reset_password }) => {
-    const [requestSent, setRequestSent] = useState(false);
     const [formData, setFormData] = useState({
         email: ''
     });
+
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
 
     const { email } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const onSubmit = e => {
+    const onSubmit = async (e) => {
         e.preventDefault();
 
-        reset_password(email);
-        setRequestSent(true);
+        try {
+            // Your login logic here
+            const response = await reset_password(email);
+            if ([200, 201, 204].includes(response.status)) {
+                    setSuccessMessage('Please check your email for the password reset URL.')
+            }
+            else{
+                if (response && response.data) {
+                    setError(response.data[0]);
+                } else {
+                    setError('An unexpected error occurred during login.');
+                }
+            }
+        }
+        catch (err) {
+            // Handle other errors (e.g., network issues)
+            setError('An error occurred. Please try again later.');
+        }
     };
-
-    if (requestSent) {
-        return <Redirect to='/' />
-    }
 
     return (
         <div className='container mt-5'>
@@ -41,6 +54,8 @@ const ResetPassword = ({ reset_password }) => {
                 </div>
                 <button className='btn btn-primary' type='submit'>Reset Password</button>
             </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
         </div>
     );
 };

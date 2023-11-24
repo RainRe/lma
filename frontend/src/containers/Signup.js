@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
-import { Link, Redirect } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { signup } from '../actions/auth';
-import axios from 'axios';
 
 const Signup = ({ signup, isAuthenticated }) => {
-    const [accountCreated, setAccountCreated] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
         last_name: '',
@@ -14,45 +12,33 @@ const Signup = ({ signup, isAuthenticated }) => {
         re_password: ''
     });
 
+    const [error, setError] = useState(null);
+    const [successMessage, setSuccessMessage] = useState(null);
+
     const { first_name, last_name, email, password, re_password } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const onSubmit = e => {
+    const onSubmit = async e => {
         e.preventDefault();
 
         if (password === re_password) {
-            signup(first_name, last_name, email, password, re_password);
-            setAccountCreated(true);
+            try {
+                const response = await signup(first_name, last_name, email, password, re_password);
+
+                if ([200, 201, 204].includes(response.status)) {
+                    setSuccessMessage('Account created. Please check your email for the activation URL.')
+                }
+                else {
+                    setError(response.status + ' ' + response.statusText + ': ' + response.data.email[0]);
+                }
+            }
+            catch (err) {
+                 setError('An error occurred during signup. Please try again.');
+            }
         }
     };
 
-    const continueWithGoogle = async () => {
-        try {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/o/google-oauth2/?redirect_uri=${process.env.REACT_APP_API_URL}/google`)
-
-            window.location.replace(res.data.authorization_url);
-        } catch (err) {
-
-        }
-    };
-
-    const continueWithFacebook = async () => {
-        try {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/o/facebook/?redirect_uri=${process.env.REACT_APP_API_URL}/facebook`)
-
-            window.location.replace(res.data.authorization_url);
-        } catch (err) {
-
-        }
-    };
-
-    if (isAuthenticated) {
-        return <Redirect to='/' />
-    }
-    if (accountCreated) {
-        return <Redirect to='/login' />
-    }
 
     return (
         <div className='container mt-5'>
@@ -118,6 +104,8 @@ const Signup = ({ signup, isAuthenticated }) => {
                 </div>
                 <button className='btn btn-primary' type='submit'>Register</button>
             </form>
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+            {successMessage && <p style={{ color: 'green' }}>{successMessage}</p>}
             <p className='mt-3'>
                 Already have an account? <Link to='/login'>Sign In</Link>
             </p>
@@ -130,13 +118,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { signup })(Signup);
-
-/*
-<button className='btn btn-danger mt-3' onClick={continueWithGoogle}>
-                Continue With Google
-            </button>
-            <br />
-            <button className='btn btn-primary mt-3' onClick={continueWithFacebook}>
-                Continue With Facebook
-            </button>
-*/

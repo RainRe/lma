@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link, Redirect } from 'react-router-dom';
 import { connect } from 'react-redux';
 import { login } from '../actions/auth';
-import axios from 'axios';
+
 
 const Login = ({ login, isAuthenticated }) => {
     const [formData, setFormData] = useState({
@@ -10,35 +10,31 @@ const Login = ({ login, isAuthenticated }) => {
         password: '' 
     });
 
+    const [error, setError] = useState(null);
+
     const { email, password } = formData;
 
     const onChange = e => setFormData({ ...formData, [e.target.name]: e.target.value });
 
-    const onSubmit = e => {
+
+    const onSubmit = async (e) => {
         e.preventDefault();
 
-        login(email, password);
-    };
-
-    const continueWithGoogle = async () => {
         try {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/o/google-oauth2/?redirect_uri=${process.env.REACT_APP_API_URL}/google`)
+            // Your login logic here
+            const response = await login(email, password);
 
-            window.location.replace(res.data.authorization_url);
+            if (response && response.data && response.data.detail ) {
+                setError(response.data.detail);
+            } else {
+                setError('An unexpected error occurred during login.');
+            }
         } catch (err) {
-
+            // Handle other errors (e.g., network issues)
+            setError('An error occurred. Please try again later.');
         }
     };
 
-    const continueWithFacebook = async () => {
-        try {
-            const res = await axios.get(`${process.env.REACT_APP_API_URL}/auth/o/facebook/?redirect_uri=${process.env.REACT_APP_API_URL}/facebook`)
-
-            window.location.replace(res.data.authorization_url);
-        } catch (err) {
-
-        }
-    };
 
     if (isAuthenticated) {
         return <Redirect to='/' />
@@ -75,6 +71,9 @@ const Login = ({ login, isAuthenticated }) => {
                 <button className='btn btn-primary' type='submit'>Login</button>
             </form>
 
+            {error && <p style={{ color: 'red' }}>{error}</p>}
+
+
             <p className='mt-3'>
                 Don't have an account? <Link to='/signup'>Sign Up</Link>
             </p>
@@ -90,13 +89,3 @@ const mapStateToProps = state => ({
 });
 
 export default connect(mapStateToProps, { login })(Login);
-
-           /*
-            <button className='btn btn-danger mt-3' onClick={continueWithGoogle}>
-                Continue With Google
-            </button>
-            <br />
-            <button className='btn btn-primary mt-3' onClick={continueWithFacebook}>
-                Continue With Facebook
-            </button>
-            */
